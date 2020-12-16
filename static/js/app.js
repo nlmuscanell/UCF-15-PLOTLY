@@ -72,7 +72,7 @@ Plotly.newPlot("bar", barData, barLayout);
 
 // Default Bubble Chart (display upon intitial page load)
 var trace2 = {
-	x: defaultOTU_labels,
+	x: defaultOTUs,
 	y: defaultValues,
 	text: defaultLabels,
 	mode: 'markers',
@@ -167,7 +167,7 @@ Plotly.restyle("bar", "y", [filteredOTU_labels_10]);
 Plotly.restyle("bar", "text", [filteredLabels_10]);
 
 // Update Bubble Chart (with drop down input)
-Plotly.restyle("bubble", "x", [filteredOTU_labels]);
+Plotly.restyle("bubble", "x", [filteredOTUs]);
 Plotly.restyle("bubble", "y", [filteredValues]);
 Plotly.restyle("bubble", "text", [filteredLabels]);
 Plotly.restyle("bubble", "marker.color", [filteredOTU_labels]);
