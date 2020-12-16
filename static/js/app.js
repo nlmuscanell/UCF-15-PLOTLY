@@ -52,7 +52,8 @@ var barLayout = {
 // Plot bar chart
 Plotly.newPlot("bar", barData, barLayout);
 
-// Default Bubble Chart
+// Default Bubble Chart (display upon intitial page load)
+// NOTE: FOR BUBBLE CHART NEED TO GRAB ALL SAMPLES (CREATE NEW V'S WITHOUT SLICE)
 var trace2 = {
 	x: defaultOTU_labels,
 	y: defaultValues,
@@ -87,6 +88,7 @@ Object.entries(defaultMeta).forEach(([key, value]) => {
 });
 ///////////////////////////////////////////////////////////////////////////////////////
 
+// NOTE: FOR BUBBLE CHART NEED TO GRAB ALL SAMPLES (CREATE NEW V'S WITHOUT SLICE)
 // Create an event handler for updates via dropdown menu selection
 d3.selectAll("#selDataset").on("change", updateCharts);
 
@@ -128,6 +130,7 @@ Plotly.restyle("bar", "y", [filteredOTU_labels]);
 Plotly.restyle("bar", "text", [filteredLabels]);
 
 // Update Bubble Chart
+// NOTE: FOR BUBBLE CHART NEED TO GRAB ALL SAMPLES (USE V'S WITHOUT SLICE)
 Plotly.restyle("bubble", "x", [filteredOTU_labels]);
 Plotly.restyle("bubble", "y", [filteredValues]);
 Plotly.restyle("bubble", "text", [filteredLabels]);
