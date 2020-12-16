@@ -8,7 +8,7 @@ d3.json("data/samples.json").then(function(data) {
 });
 });
 ///////////////////////////////////////////////////////////////////////////////////////
-// Grab top ten values for the first individual (default data to be loaded)
+// Grab top ten values for the first individual (default data to be displayed upon page load)
 d3.json("data/samples.json").then(function(data) {
     var samples = data.samples;
     console.log(samples);
@@ -45,15 +45,39 @@ var trace1 = {
 var barData = [trace1];
 
 // Create layout variable
-var layout = {
-    title: 'Bacteria Frequency by Operational Taxonomic Unit',
+var barLayout = {
+    title: 'Bacteria Frequency for Top 10 OTUs',
 };
 
 // Plot bar chart
-Plotly.newPlot("bar", barData, layout);
-///////////////////////////////////////////////////////////////////////////////////////
+Plotly.newPlot("bar", barData, barLayout);
 
-// Default Demographic Table (Metadata)
+// Default Bubble Chart
+var trace2 = {
+	x: defaultOTU_labels,
+	y: defaultValues,
+	text: defaultLabels,
+	mode: 'markers',
+	marker: {
+		color: defaultOTU_labels,
+		size: defaultValues
+		}
+};
+
+// Create data variable		
+var bubbleData = [trace2];
+
+// Create layout variable
+var bubbleLayout = {
+	title: 'All OTU Samples For Test Subject',
+	xaxis: { title: "OTU ID"},
+	showlegend: false,
+};
+    
+// Plot bubble chart
+Plotly.newPlot('bubble', bubbleData, bubbleLayout);
+///////////////////////////////////////////////////////////////////////////////////////
+// Default Demographic Table (default metadata to be displayed upon page load)
 defaultMeta = meta.filter(meta => meta.id === 940)[0];
 console.log(defaultMeta);
 
@@ -66,7 +90,6 @@ Object.entries(defaultMeta).forEach(([key, value]) => {
 // Create an event handler for updates via dropdown menu selection
 d3.selectAll("#selDataset").on("change", updateCharts);
 
-// Create function to display OTU data for id that is selected in the dropdown
 function updateCharts() {
     var inputElement = d3.select("#selDataset");
     console.log("input element");
@@ -104,9 +127,16 @@ Plotly.restyle("bar", "x", [filteredValues]);
 Plotly.restyle("bar", "y", [filteredOTU_labels]);
 Plotly.restyle("bar", "text", [filteredLabels]);
 
+// Update Bubble Chart
+Plotly.restyle("bubble", "x", [filteredOTU_labels]);
+Plotly.restyle("bubble", "y", [filteredValues]);
+Plotly.restyle("bubble", "text", [filteredLabels]);
+Plotly.restyle("bubble", "marker.color", [filteredOTU_labels]);
+Plotly.restyle("bubble", "marker.size", [filteredValues]);
+        
 // Update Demographic Table (Metadata)
 metaUpdate = data.metadata.filter(samples => samples.id == inputValue)[0];
-d3.select("#sample-metadata").html("");
+    d3.select("#sample-metadata").html("");
 
 Object.entries(metaUpdate).forEach(([key, value]) => {
     d3.select("#sample-metadata").append("p").text(`${key}: ${value}`);
