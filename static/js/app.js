@@ -1,55 +1,116 @@
+// Belly Button Diversity Data
 
-// Include a dropdown menu to display the top 10 OTUs found in that individual
-// Use `sample_values` as the values for the bar chart
-// Use `otu_ids` as the labels for the bar chart
-// Use `otu_labels` as the hovertext for the chart
-
-// Use the D3 library to read in `samples.json`
+///////////////////////////////////////////////////////////////////////////////////////
+// Append names to dropdown menu
 d3.json("data/samples.json").then(function(data) {
-    console.log(data);
+    data.names.forEach((name) => {
+        d3.select("#selDataset").append("option").text(name).property("value", name);
+});
+});
+///////////////////////////////////////////////////////////////////////////////////////
+// Grab top ten values for the first individual (default data to be loaded)
+d3.json("data/samples.json").then(function(data) {
+    var samples = data.samples;
+    console.log(samples);
+    var meta = data.metadata
+    console.log(meta);
 
-// Grab top ten values for each id number
-// NOTE: Only works for one individual right now
-     var id = data.names.slice(0, 10);
-     console.log(id)
+// First 10 values for the default data to be disaplayed upon page load (id 940)
+    var defaultOTUs = samples[0].otu_ids.slice(0, 10);
+    console.log(defaultOTUs);
 
-     var otu_ids =  data.samples[0].otu_ids.slice(0, 10);
-     console.log(otu_ids);
+    var defaultValues = samples[0].sample_values.slice(0, 10);
+    console.log(defaultValues);
      
-     var values = data.samples[0].sample_values.slice(0, 10);
-     console.log(values);
-     
-     var labels =  data.samples[0].otu_labels.slice(0, 10);
-     console.log (labels);
+    var defaultLabels =  samples[0].otu_labels.slice(0, 10);
+    console.log (defaultLabels);
 
-// Create a horizontal bar chart
-// NOTE: Bar formatting is off and needs to be fixed (bar width and sort desc)
-// NOTE: Need to add in hover text
+    // OTU ids with string "otu" added to number
+    var defaultOTU_labels = defaultOTUs.map(otu => `OTU ${otu}`);
+    console.log (defaultOTU_labels);
+
+///////////////////////////////////////////////////////////////////////////////////////
+// Default Horizontal Bar Chart (display upon intitial page load)
 var trace1 = {
-      x: values,
-      y: otu_ids,
-      //text: need hover text ,
+      x: defaultValues,
+      y: defaultOTU_labels,
+      text: defaultLabels,
       orientation: "h",
       type: "bar",
       marker: {
-        color: 'blue'} 
+        color: 'deeppink'} 
  };
 
-// create data variable
-var data = [trace1];
+// Create data variable
+var barData = [trace1];
 
-// create layout variable to set plots layout
+// Create layout variable
 var layout = {
-    title: 'OTU Frequency by OTU type (ID)',
-    barmode: 'stack'
+    title: 'Bacteria Frequency by Operational Taxonomic Unit',
 };
 
-Plotly.newPlot("bar", data, layout);
+// Plot bar chart
+Plotly.newPlot("bar", barData, layout);
+///////////////////////////////////////////////////////////////////////////////////////
+
+// Default Demographic Table (Metadata)
+defaultMeta = meta.filter(meta => meta.id === 940)[0];
+console.log(defaultMeta);
+
+Object.entries(defaultMeta).forEach(([key, value]) => {
+    d3.select("#sample-metadata").append("p").text(`${key.toUpperCase()}: ${value}`);
 
 });
+///////////////////////////////////////////////////////////////////////////////////////
 
+// Create an event handler for updates via dropdown menu selection
+d3.selectAll("#selDataset").on("change", updateCharts);
 
+// Create function to display OTU data for id that is selected in the dropdown
+function updateCharts() {
+    var inputElement = d3.select("#selDataset");
+    console.log("input element");
+    console.log(inputElement);
+    
+    var inputValue = inputElement.property("value");
+    console.log("input value");
+    console.log(inputValue);
+    
+    filteredData = samples.filter(samples => samples.id === inputValue)[0];
+    console.log("filtered data");
+    console.log(filteredData);
 
-// Bubble Chart (Metadata)
+    // Store top 10 values for the id selected in the drop down
+    filteredValues = filteredData.sample_values.slice(0, 10);
+    console.log("filtered values");
+    console.log(filteredValues);
 
-// Demographic Table 
+    filteredOTUs = filteredData.otu_ids.slice(0, 10);
+    console.log("filtered otu ids");
+    console.log(filteredOTUs);
+
+    filteredLabels = filteredData.otu_labels.slice(0, 10);
+    console.log("filtered otu labels");
+    console.log(filteredLabels);
+
+     // OTU ids with string "otu" added to number
+     var filteredOTU_labels = filteredOTUs.map(otu => `OTU ${otu}`);
+     console.log("filtered bacteria labels for bar plot hover text")
+     console.log (filteredOTU_labels);
+///////////////////////////////////////////////////////////////////////////////////////
+
+// Update Horizontal Bar Chart
+Plotly.restyle("bar", "x", [filteredValues]);
+Plotly.restyle("bar", "y", [filteredOTU_labels]);
+Plotly.restyle("bar", "text", [filteredLabels]);
+
+// Update Demographic Table (Metadata)
+metaUpdate = data.metadata.filter(samples => samples.id == inputValue)[0];
+d3.select("#sample-metadata").html("");
+
+Object.entries(metaUpdate).forEach(([key, value]) => {
+    d3.select("#sample-metadata").append("p").text(`${key}: ${value}`);
+});
+};
+});
+///////////////////////////////////////////////////////////////////////////////////////
