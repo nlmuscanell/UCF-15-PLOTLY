@@ -1,4 +1,4 @@
-// Belly Button Diversity Data
+//////////////////////////// Belly Button Diversity Data //////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -17,7 +17,7 @@ d3.json("data/samples.json").then(function(data) {
     console.log(samples);
     var meta = data.metadata
     console.log(meta);
-
+    
 // First 10 samples for the default data to be disaplayed upon page load (id 940)
     var defaultOTUs_10 = samples[0].otu_ids.slice(0, 10);
     console.log(defaultOTUs_10);
@@ -77,7 +77,7 @@ var trace2 = {
 	text: defaultLabels,
 	mode: 'markers',
 	marker: {
-		color: defaultOTU_labels,
+		color: defaultOTUs,
 		size: defaultValues
 		}
 };
@@ -170,7 +170,7 @@ Plotly.restyle("bar", "text", [filteredLabels_10]);
 Plotly.restyle("bubble", "x", [filteredOTUs]);
 Plotly.restyle("bubble", "y", [filteredValues]);
 Plotly.restyle("bubble", "text", [filteredLabels]);
-Plotly.restyle("bubble", "marker.color", [filteredOTU_labels]);
+Plotly.restyle("bubble", "marker.color", [filteredOTUs]);
 Plotly.restyle("bubble", "marker.size", [filteredValues]);
         
 // Update Demographic Table (Metadata)
